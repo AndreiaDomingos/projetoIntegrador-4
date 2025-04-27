@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react'; // Ícone de lixeira branca
+import { Trash2 } from 'lucide-react'; // Ícone da lixeira
 
 interface Lembrete {
   id: number;
@@ -18,6 +18,8 @@ export default function ConsultaPage() {
   const router = useRouter();
   const [nomeBusca, setNomeBusca] = useState('');
   const [lembretes, setLembretes] = useState<Lembrete[]>([]);
+  const [idParaDeletar, setIdParaDeletar] = useState<number | null>(null); // <- ID para deletar
+  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);     // <- Mostrar modal
 
   async function buscarLembretes() {
     if (!nomeBusca) return;
@@ -34,15 +36,22 @@ export default function ConsultaPage() {
     }
   }
 
-  async function deletarLembrete(id: number) {
-    if (!confirm('Tem certeza que deseja excluir este lembrete?')) return;
+  function pedirConfirmacao(id: number) {
+    setIdParaDeletar(id);
+    setMostrarConfirmacao(true);
+  }
+
+  async function deletarConfirmado() {
+    if (!idParaDeletar) return;
 
     try {
-      await fetch(`https://projetointegrador-4.onrender.com/lembrete/${id}`, {
+      await fetch(`https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}`, {
         method: 'DELETE',
       });
 
-      setLembretes(prev => prev.filter(l => l.id !== id));
+      setLembretes(prev => prev.filter(l => l.id !== idParaDeletar));
+      setIdParaDeletar(null);
+      setMostrarConfirmacao(false);
     } catch (error) {
       console.error('Erro ao deletar lembrete:', error);
     }
@@ -81,7 +90,7 @@ export default function ConsultaPage() {
               {/* Botão Deletar */}
               <div className="absolute top-3 right-3 flex space-x-2">
                 <button
-                  onClick={() => deletarLembrete(lembrete.id)}
+                  onClick={() => pedirConfirmacao(lembrete.id)}
                   className="bg-blue-400 hover:bg-blue-500 text-white p-2 rounded-full transition"
                   title="Deletar"
                 >
@@ -110,6 +119,30 @@ export default function ConsultaPage() {
       >
         Voltar ao Menu
       </button>
+
+      {/* Modal de Confirmação */}
+      {mostrarConfirmacao && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-sm text-center">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Confirmação</h2>
+            <p className="text-gray-700 mb-6">Deseja realmente excluir este lembrete?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={deletarConfirmado}
+                className="bg-red-400 hover:bg-red-500 text-white font-semibold px-6 py-2 rounded-2xl transition"
+              >
+                Sim
+              </button>
+              <button
+                onClick={() => setMostrarConfirmacao(false)}
+                className="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-6 py-2 rounded-2xl transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
