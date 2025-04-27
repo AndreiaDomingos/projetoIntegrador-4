@@ -88,13 +88,10 @@ export default function CadastroPage() {
         onSubmit={handleSubmit} 
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
-        <h1 className="text-2xl font-bold text-gray-700 mb-4">Cadastrar Lembrete</h1>
+        <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Cadastrar Lembrete</h1>
 
-        {/* Adicionado conforme pedido: mensagem de carregando */}
         {carregandoDescricao && (
-          <p className="text-blue-500 text-center mb-4 font-semibold">
-            Buscando informações do medicamento...
-          </p>
+          <p className="text-blue-500 text-center font-semibold mb-4">Buscando informações do medicamento...</p>
         )}
 
         {sucesso && (
@@ -103,117 +100,55 @@ export default function CadastroPage() {
           </div>
         )}
 
-        <input 
-          name="nome" 
-          placeholder="Nome" 
-          value={form.nome} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="nome" placeholder="Nome" value={form.nome} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
-        <input 
-          name="idade" 
-          placeholder="Idade" 
-          type="number" 
-          value={form.idade} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="idade" placeholder="Idade" type="number" value={form.idade} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
         <div className="flex items-center space-x-2">
-          <input 
-            type="checkbox" 
-            name="notificacao" 
-            checked={form.notificacao} 
-            onChange={handleChange} 
-          />
+          <input type="checkbox" name="notificacao" checked={form.notificacao} onChange={handleChange} />
           <label className="text-gray-600">Receber Notificação</label>
         </div>
 
         {form.notificacao && (
           <>
-            <input 
-              name="telefone" 
-              placeholder="Telefone" 
-              value={form.telefone} 
-              onChange={handleChange} 
-              className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-            />
-            <input 
-              name="email" 
-              type="email" 
-              placeholder="Email" 
-              value={form.email} 
-              onChange={handleChange} 
-              className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-            />
+            <input name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange}
+              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+
+            <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange}
+              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
           </>
         )}
 
-        <input 
-          name="medicamento" 
-          placeholder="Medicamento" 
-          value={form.medicamento} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="medicamento" placeholder="Medicamento" value={form.medicamento} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
-        <button
-          type="button"
-          onClick={buscarDescricaoMedicamento}
-          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition"
-        >
+        <button type="button" onClick={buscarDescricaoMedicamento}
+          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition">
           Procurar informações sobre este medicamento
         </button>
 
-        <input 
-          name="dose" 
-          placeholder="Dose" 
-          value={form.dose} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="dose" placeholder="Dose" value={form.dose} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
-        <input 
-          name="dias" 
-          placeholder="Por quantos dias" 
-          type="number" 
-          value={form.dias} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="dias" placeholder="Por quantos dias" type="number" value={form.dias} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
-        <input 
-          name="horario" 
-          placeholder="Horário" 
-          value={form.horario} 
-          onChange={handleChange} 
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" 
-          required 
-        />
+        <input name="horario" placeholder="Horário" value={form.horario} onChange={handleChange}
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
 
-        <button 
-          type="submit" 
-          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition"
-        >
+        <button type="submit"
+          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition">
           Salvar Lembrete
         </button>
 
-        <button 
-          type="button"
-          onClick={() => router.push('/')}
-          className="w-full mt-4 bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 rounded-2xl transition"
-        >
+        <button type="button" onClick={() => router.push('/')}
+          className="w-full mt-4 bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 rounded-2xl transition">
           Voltar ao Menu
         </button>
       </form>
 
-      {/* Modal IA */}
       {mostrarModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl w-full max-w-md text-center">
