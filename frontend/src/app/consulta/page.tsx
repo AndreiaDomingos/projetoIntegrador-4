@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Lembrete {
   id: number;
@@ -13,6 +14,7 @@ interface Lembrete {
 }
 
 export default function ConsultaPage() {
+  const router = useRouter();
   const [nomeBusca, setNomeBusca] = useState('');
   const [lembrete, setLembrete] = useState<Lembrete | null>(null);
 
@@ -20,7 +22,7 @@ export default function ConsultaPage() {
     if (!nomeBusca) return;
 
     try {
-      const response = await fetch('http://localhost:3000/lembrete', { method: 'GET' });
+      const response = await fetch('https://projetointegrador-4.onrender.com/lembrete', { method: 'GET' });
       const data: Lembrete[] = await response.json();
 
       const encontrado = data.find(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));
@@ -58,7 +60,7 @@ export default function ConsultaPage() {
       </div>
 
       {lembrete ? (
-        <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md space-y-2">
+        <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md space-y-2 mb-4">
           <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
           <p><strong>Idade:</strong> {lembrete.idade}</p>
           <p><strong>Medicamento:</strong> {lembrete.medicamento}</p>
@@ -71,6 +73,13 @@ export default function ConsultaPage() {
           <p className="text-gray-600 mt-4">Nenhum lembrete encontrado.</p>
         )
       )}
+
+      <button
+        onClick={() => router.push('/')}
+        className="mt-6 bg-gray-400 hover:bg-gray-500 text-white font-semibold px-6 py-3 rounded-2xl transition"
+      >
+        Voltar ao Menu
+      </button>
     </div>
   );
 }

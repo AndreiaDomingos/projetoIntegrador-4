@@ -16,6 +16,10 @@ export default function CadastroPage() {
     dias: '',
     horario: '',
   });
+  const [descricao, setDescricao] = useState('');
+  const [carregandoDescricao, setCarregandoDescricao] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
@@ -28,7 +32,7 @@ export default function CadastroPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    await fetch('http://localhost:3000/lembrete', {
+    await fetch('https://projetointegrador-4.onrender.com/lembrete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -44,16 +48,53 @@ export default function CadastroPage() {
       }),
     });
 
-    router.push('/');
+    setSucesso(true);
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
+  }
+
+  async function buscarDescricaoMedicamento() {
+    if (!form.medicamento) {
+      alert('Por favor, preencha o nome do medicamento.');
+      return;
+    }
+
+    setCarregandoDescricao(true);
+
+    const resposta = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `Explique de forma resumida (em até 3 linhas) para que serve o medicamento ${form.medicamento}.`
+          }]
+        }]
+      })
+    });
+
+    const data = await resposta.json();
+    const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text || "Descrição não encontrada.";
+    
+    setDescricao(textoGerado);
+    setMostrarModal(true);
+    setCarregandoDescricao(false);
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-50 p-6">
+    <div className="min-h-screen flex flex-col items-center bg-blue-50 p-6">
       <form 
         onSubmit={handleSubmit} 
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Cadastrar Lembrete</h1>
+
+        {sucesso && (
+          <div className="bg-green-100 text-green-700 p-3 rounded-2xl text-center font-semibold">
+            Lembrete cadastrado com sucesso!
+          </div>
+        )}
 
         <input 
           name="nome" 
@@ -113,6 +154,14 @@ export default function CadastroPage() {
           required 
         />
 
+        <button
+          type="button"
+          onClick={buscarDescricaoMedicamento}
+          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition"
+        >
+          Procurar informações sobre este medicamento
+        </button>
+
         <input 
           name="dose" 
           placeholder="Dose" 
@@ -147,7 +196,32 @@ export default function CadastroPage() {
         >
           Salvar Lembrete
         </button>
+
+        {/* Botão Voltar */}
+        <button 
+          type="button"
+          onClick={() => router.push('/')}
+          className="w-full mt-4 bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 rounded-2xl transition"
+        >
+          Voltar ao Menu
+        </button>
       </form>
+
+      {/* Modal IA */}
+      {mostrarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-md text-center">
+            <h2 className="text-xl font-bold mb-4">Informações sobre {form.medicamento}</h2>
+            <p className="text-gray-700 mb-6">{descricao}</p>
+            <button
+              onClick={() => setMostrarModal(false)}
+              className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-6 py-2 rounded-2xl transition"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
