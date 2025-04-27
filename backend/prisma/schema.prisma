@@ -1,0 +1,23 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Lembrete {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  idade        Int
+  notificacao  Boolean
+  telefone     String?
+  email        String?
+  medicamento  String
+  dose         String
+  dias         Int
+  horario      String  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
