@@ -2,13 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLembreteDto } from './dto/create-lembrete.dto';
 import { UpdateLembreteDto } from './dto/update-lembrete.dto';
+import { MailService } from '../mail/mail.service'; // <- importamos o MailService
 
 @Injectable()
 export class LembreteService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService, // <- injetamos o MailService aqui
+  ) {}
 
   async create(data: CreateLembreteDto) {
-    return this.prisma.lembrete.create({ data });
+    const lembrete = await this.prisma.lembrete.create({ data });
+
+    // Envia e-mail se a notificação estiver marcada e houver e-mail preenchido
+    if (data.notificacao && data.email) {
+      await this.mailService.enviarEmailLembrete(
+        data.email,
+        data.medicamento,
+        data.horario,
+      );
+    }
+
+    return lembrete;
   }
 
   async findAll() {
@@ -30,4 +45,3 @@ export class LembreteService {
     return this.prisma.lembrete.delete({ where: { id } });
   }
 }
-
