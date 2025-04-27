@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react'; // <- Importamos o ícone da lixeira branca
+import { Trash2 } from 'lucide-react'; // Ícone de lixeira branca
 
 interface Lembrete {
   id: number;
@@ -56,7 +56,7 @@ export default function ConsultaPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-blue-50 p-6">
-      <h1 className="text-2xl font-bold text-gray-700 mb-6">Consultar Lembrete</h1>
+      <h1 className="text-2xl font-bold text-gray-700 text-center mb-6">Consultar Lembrete</h1>
 
       <div className="w-full max-w-md flex space-x-2 mb-6">
         <input
@@ -64,7 +64,7 @@ export default function ConsultaPage() {
           placeholder="Digite o nome"
           value={nomeBusca}
           onChange={e => setNomeBusca(e.target.value)}
-          className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
         />
         <button
           onClick={buscarLembretes}
@@ -77,7 +77,7 @@ export default function ConsultaPage() {
       {lembretes.length > 0 ? (
         <div className="space-y-4 w-full max-w-md">
           {lembretes.map((lembrete) => (
-            <div key={lembrete.id} className="bg-white p-6 rounded-2xl shadow-md relative">
+            <div key={lembrete.id} className="bg-white p-6 rounded-2xl shadow-md relative text-gray-900">
               {/* Botão Deletar */}
               <div className="absolute top-3 right-3 flex space-x-2">
                 <button
