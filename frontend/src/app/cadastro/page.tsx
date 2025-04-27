@@ -19,6 +19,7 @@ export default function CadastroPage() {
   const [descricao, setDescricao] = useState('');
   const [carregandoDescricao, setCarregandoDescricao] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarErro, setMostrarErro] = useState(false); // <- NOVO estado para erro
   const [sucesso, setSucesso] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -56,7 +57,7 @@ export default function CadastroPage() {
 
   async function buscarDescricaoMedicamento() {
     if (!form.medicamento) {
-      alert('Por favor, preencha o nome do medicamento.');
+      setMostrarErro(true); // Mostra pop-up se não preencher
       return;
     }
 
@@ -149,16 +150,35 @@ export default function CadastroPage() {
         </button>
       </form>
 
+      {/* Modal IA (busca medicamento) */}
       {mostrarModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl w-full max-w-md text-center">
-            <h2 className="text-xl text-gray-900 font-bold mb-4">Informações sobre {form.medicamento}</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Informações sobre {form.medicamento}
+            </h2>
             <p className="text-gray-700 mb-6">{descricao}</p>
             <button
               onClick={() => setMostrarModal(false)}
               className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-6 py-2 rounded-2xl transition"
             >
               Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal ERRO (campo medicamento vazio) */}
+      {mostrarErro && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-sm text-center">
+            <h2 className="text-xl font-bold text-blue-500 mb-4">Atenção!</h2>
+            <p className="text-gray-900 mb-6">Por favor, preencha o nome do medicamento para pesquisar.</p>
+            <button
+              onClick={() => setMostrarErro(false)}
+              className="bg-blue-400 text-white font-semibold px-6 py-2 rounded-2xl transition"
+            >
+              Ok
             </button>
           </div>
         </div>
