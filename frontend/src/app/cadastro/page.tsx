@@ -152,7 +152,7 @@ export default function CadastroPage() {
       {mostrarModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl w-full max-w-md text-center">
-            <h2 className="text-xl font-bold mb-4">Informações sobre {form.medicamento}</h2>
+            <h2 className="text-xl text-gray-900 font-bold mb-4">Informações sobre {form.medicamento}</h2>
             <p className="text-gray-700 mb-6">{descricao}</p>
             <button
               onClick={() => setMostrarModal(false)}
