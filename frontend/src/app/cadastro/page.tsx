@@ -90,6 +90,13 @@ export default function CadastroPage() {
       >
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Cadastrar Lembrete</h1>
 
+        {/* Adicionado conforme pedido: mensagem de carregando */}
+        {carregandoDescricao && (
+          <p className="text-blue-500 text-center mb-4 font-semibold">
+            Buscando informações do medicamento...
+          </p>
+        )}
+
         {sucesso && (
           <div className="bg-green-100 text-green-700 p-3 rounded-2xl text-center font-semibold">
             Lembrete cadastrado com sucesso!
@@ -197,7 +204,6 @@ export default function CadastroPage() {
           Salvar Lembrete
         </button>
 
-        {/* Botão Voltar */}
         <button 
           type="button"
           onClick={() => router.push('/')}

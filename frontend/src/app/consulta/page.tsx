@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Trash2 } from 'lucide-react'; // <- Importamos o ícone da lixeira branca
 
 interface Lembrete {
   id: number;
@@ -16,26 +17,40 @@ interface Lembrete {
 export default function ConsultaPage() {
   const router = useRouter();
   const [nomeBusca, setNomeBusca] = useState('');
-  const [lembrete, setLembrete] = useState<Lembrete | null>(null);
+  const [lembretes, setLembretes] = useState<Lembrete[]>([]);
 
-  async function buscarLembrete() {
+  async function buscarLembretes() {
     if (!nomeBusca) return;
 
     try {
       const response = await fetch('https://projetointegrador-4.onrender.com/lembrete', { method: 'GET' });
       const data: Lembrete[] = await response.json();
 
-      const encontrado = data.find(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));
-      setLembrete(encontrado || null);
+      const encontrados = data.filter(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));
+      setLembretes(encontrados);
     } catch (error) {
-      console.error('Erro ao buscar lembrete:', error);
-      setLembrete(null);
+      console.error('Erro ao buscar lembretes:', error);
+      setLembretes([]);
+    }
+  }
+
+  async function deletarLembrete(id: number) {
+    if (!confirm('Tem certeza que deseja excluir este lembrete?')) return;
+
+    try {
+      await fetch(`https://projetointegrador-4.onrender.com/lembrete/${id}`, {
+        method: 'DELETE',
+      });
+
+      setLembretes(prev => prev.filter(l => l.id !== id));
+    } catch (error) {
+      console.error('Erro ao deletar lembrete:', error);
     }
   }
 
   useEffect(() => {
     if (nomeBusca === '') {
-      setLembrete(null);
+      setLembretes([]);
     }
   }, [nomeBusca]);
 
@@ -52,21 +67,36 @@ export default function ConsultaPage() {
           className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
         />
         <button
-          onClick={buscarLembrete}
+          onClick={buscarLembretes}
           className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-3 rounded-2xl transition"
         >
           Buscar
         </button>
       </div>
 
-      {lembrete ? (
-        <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md space-y-2 mb-4">
-          <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
-          <p><strong>Idade:</strong> {lembrete.idade}</p>
-          <p><strong>Medicamento:</strong> {lembrete.medicamento}</p>
-          <p><strong>Dose:</strong> {lembrete.dose}</p>
-          <p><strong>Dias:</strong> {lembrete.dias}</p>
-          <p><strong>Horário:</strong> {lembrete.horario}</p>
+      {lembretes.length > 0 ? (
+        <div className="space-y-4 w-full max-w-md">
+          {lembretes.map((lembrete) => (
+            <div key={lembrete.id} className="bg-white p-6 rounded-2xl shadow-md relative">
+              {/* Botão Deletar */}
+              <div className="absolute top-3 right-3 flex space-x-2">
+                <button
+                  onClick={() => deletarLembrete(lembrete.id)}
+                  className="bg-blue-400 hover:bg-blue-500 text-white p-2 rounded-full transition"
+                  title="Deletar"
+                >
+                  <Trash2 size={20} color="white" />
+                </button>
+              </div>
+
+              <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
+              <p><strong>Idade:</strong> {lembrete.idade}</p>
+              <p><strong>Medicamento:</strong> {lembrete.medicamento}</p>
+              <p><strong>Dose:</strong> {lembrete.dose}</p>
+              <p><strong>Dias:</strong> {lembrete.dias}</p>
+              <p><strong>Horário:</strong> {lembrete.horario}</p>
+            </div>
+          ))}
         </div>
       ) : (
         nomeBusca && (
