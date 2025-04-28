@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputMask from 'react-input-mask';
+import InputMask from 'react-input-mask-next';
 
 export default function CadastroPage() {
   const router = useRouter();
