@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import InputMask from 'react-input-mask';
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function CadastroPage() {
   const [descricao, setDescricao] = useState('');
   const [carregandoDescricao, setCarregandoDescricao] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [mostrarErro, setMostrarErro] = useState(false); // <- NOVO estado para erro
+  const [mostrarErro, setMostrarErro] = useState(false);
   const [sucesso, setSucesso] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -33,6 +34,13 @@ export default function CadastroPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Formatar telefone (remover tudo que não é número e adicionar + no início)
+    let telefoneFormatado = null;
+    if (form.telefone) {
+      const soNumeros = form.telefone.replace(/\D/g, '');
+      telefoneFormatado = `+${soNumeros}`;
+    }
+
     await fetch('https://projetointegrador-4.onrender.com/lembrete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,7 +48,7 @@ export default function CadastroPage() {
         nome: form.nome,
         idade: parseInt(form.idade),
         notificacao: form.notificacao,
-        telefone: form.notificacao ? form.telefone : null,
+        telefone: form.notificacao ? telefoneFormatado : null,
         email: form.notificacao ? form.email : null,
         medicamento: form.medicamento,
         dose: form.dose,
@@ -57,7 +65,7 @@ export default function CadastroPage() {
 
   async function buscarDescricaoMedicamento() {
     if (!form.medicamento) {
-      setMostrarErro(true); // Mostra pop-up se não preencher
+      setMostrarErro(true);
       return;
     }
 
@@ -77,7 +85,7 @@ export default function CadastroPage() {
 
     const data = await resposta.json();
     const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text || "Descrição não encontrada.";
-    
+
     setDescricao(textoGerado);
     setMostrarModal(true);
     setCarregandoDescricao(false);
@@ -114,8 +122,21 @@ export default function CadastroPage() {
 
         {form.notificacao && (
           <>
-            <input name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange}
-              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+            <InputMask
+              mask="+55 (99) 99999-9999"
+              value={form.telefone}
+              onChange={handleChange}
+            >
+              {(inputProps) => (
+                <input
+                  {...inputProps}
+                  name="telefone"
+                  placeholder="+55 (11) 91234-5678"
+                  className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  required
+                />
+              )}
+            </InputMask>
 
             <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange}
               className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
