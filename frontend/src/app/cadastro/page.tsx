@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputMask from 'react-input-mask-next';
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -121,19 +120,16 @@ export default function CadastroPage() {
 
         {form.notificacao && (
           <>
-            <InputMask
-              mask="+55 (99) 99999-9999"
+            <input
+              type="tel"
+              name="telefone"
+              placeholder="+55 (11) 91234-5678"
               value={form.telefone}
               onChange={handleChange}
-            >
-              <input
-                type="text"
-                name="telefone"
-                placeholder="+55 (11) 91234-5678"
-                className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                required
-              />
-            </InputMask>
+              pattern="\+55\s\(\d{2}\)\s\d{5}-\d{4}"
+              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
 
             <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange}
               className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
