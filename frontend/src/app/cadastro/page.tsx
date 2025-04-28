@@ -92,8 +92,8 @@ export default function CadastroPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-blue-50 p-6">
-      <form 
-        onSubmit={handleSubmit} 
+      <form
+        onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
         <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Cadastrar Lembrete</h1>
@@ -126,15 +126,13 @@ export default function CadastroPage() {
               value={form.telefone}
               onChange={handleChange}
             >
-              {(inputProps) => (
-                <input
-                  {...inputProps}
-                  name="telefone"
-                  placeholder="+55 (11) 91234-5678"
-                  className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  required
-                />
-              )}
+              <input
+                type="text"
+                name="telefone"
+                placeholder="+55 (11) 91234-5678"
+                className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                required
+              />
             </InputMask>
 
             <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange}
