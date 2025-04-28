@@ -25,10 +25,18 @@ export default function CadastroPage() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  
+    if (name === 'telefone') {
+      setForm(prev => ({
+        ...prev,
+        telefone: value,
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
