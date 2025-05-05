@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react'; // Ícone da lixeira
+import CustomButton from '../components/CustomButton';
+import CustomTextBox from '../components/CustomTextBox';
 
 interface Lembrete {
   id: number;
@@ -68,19 +70,11 @@ export default function ConsultaPage() {
       <h1 className="text-2xl font-bold text-gray-700 text-center mb-6">Consultar Lembrete</h1>
 
       <div className="w-full max-w-md flex space-x-2 mb-6">
-        <input
-          type="text"
-          placeholder="Digite o nome"
-          value={nomeBusca}
-          onChange={e => setNomeBusca(e.target.value)}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
-        />
-        <button
-          onClick={buscarLembretes}
-          className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-3 rounded-2xl transition"
-        >
+        <CustomTextBox name="nomeBusca" placeholder="Digite o nome" value={nomeBusca} onChange={e => setNomeBusca(e.target.value)} required />
+
+        <CustomButton onClick={buscarLembretes} variant="third">
           Buscar
-        </button>
+        </CustomButton>
       </div>
 
       {lembretes.length > 0 ? (

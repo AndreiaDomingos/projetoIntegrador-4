@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import CustomButton from '../components/CustomButton';
+import CustomTextBox from '../components/CustomTextBox';
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -38,7 +40,6 @@ export default function CadastroPage() {
       const numeros = form.telefone.replace(/\D/g, '');
       telefoneFormatado = `+${numeros}`;
     }
-
     await fetch('https://projetointegrador-4.onrender.com/lembrete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -107,11 +108,8 @@ export default function CadastroPage() {
           </div>
         )}
 
-        <input name="nome" placeholder="Nome" value={form.nome} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
-
-        <input name="idade" placeholder="Idade" type="number" value={form.idade} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
+        <CustomTextBox name='nome' placeholder='Nome' value={form.nome} onChange={handleChange} required />
+        <CustomTextBox name='idade' placeholder='Idade' value={form.idade} onChange={handleChange} required type="number" />
 
         <div className="flex items-center space-x-2">
           <input type="checkbox" name="notificacao" checked={form.notificacao} onChange={handleChange} />
@@ -135,33 +133,16 @@ export default function CadastroPage() {
               className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
           </>
         )}
+        
+        <CustomTextBox name='medicamento' placeholder='Medicamento' value={form.medicamento} onChange={handleChange} required />
 
-        <input name="medicamento" placeholder="Medicamento" value={form.medicamento} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
-
-        <button type="button" onClick={buscarDescricaoMedicamento}
-          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition">
-          Procurar informações sobre este medicamento
-        </button>
-
-        <input name="dose" placeholder="Dose" value={form.dose} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
-
-        <input name="dias" placeholder="Por quantos dias" type="number" value={form.dias} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
-
-        <input name="horario" placeholder="Horário" value={form.horario} onChange={handleChange}
-          className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" required />
-
-        <button type="submit"
-          className="w-full bg-blue-400 hover:bg-blue-500 text-white font-semibold py-3 rounded-2xl transition">
-          Salvar Lembrete
-        </button>
-
-        <button type="button" onClick={() => router.push('/')}
-          className="w-full mt-4 bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 rounded-2xl transition">
-          Voltar ao Menu
-        </button>
+        <CustomButton type="button" onClick={buscarDescricaoMedicamento} variant="primary">Procurar informações sobre este medicamento</CustomButton>
+        
+        <CustomTextBox name='dose' placeholder='Dose' value={form.dose} onChange={handleChange} required />
+        <CustomTextBox name='dias' placeholder='Por quantos dias' type="number" value={form.dias} onChange={handleChange} required />
+        <CustomTextBox name='horario' placeholder='Horário' value={form.horario} onChange={handleChange} required />
+        <CustomButton type="submit" variant="primary">Salvar Lembrete</CustomButton>
+        <CustomButton onClick={() => router.push('/')} variant="secondary">Voltar ao Menu</CustomButton>
       </form>
 
       {/* Modal IA (busca medicamento) */}
@@ -172,12 +153,9 @@ export default function CadastroPage() {
               Informações sobre {form.medicamento}
             </h2>
             <p className="text-gray-700 mb-6">{descricao}</p>
-            <button
-              onClick={() => setMostrarModal(false)}
-              className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-6 py-2 rounded-2xl transition"
-            >
+            <CustomButton onClick={() => setMostrarModal(false)} variant="third" >
               Fechar
-            </button>
+            </CustomButton>
           </div>
         </div>
       )}
@@ -188,12 +166,9 @@ export default function CadastroPage() {
           <div className="bg-white p-6 rounded-2xl w-full max-w-sm text-center">
             <h2 className="text-xl font-bold text-blue-500 mb-4">Atenção!</h2>
             <p className="text-gray-900 mb-6">Por favor, preencha o nome do medicamento para pesquisar.</p>
-            <button
-              onClick={() => setMostrarErro(false)}
-              className="bg-blue-400 text-white font-semibold px-6 py-2 rounded-2xl transition"
-            >
+            <CustomButton onClick={() => setMostrarErro(false)} variant="third" >
               Ok
-            </button>
+            </CustomButton>
           </div>
         </div>
       )}
