@@ -26,8 +26,8 @@ export default function ConsultaPage() {
   async function buscarLembretes() {
     if (!nomeBusca) return;
 
-    try {
-      const response = await fetch('https://projetointegrador-4.onrender.com/lembrete', { method: 'GET' });
+    try {{/*'https://projetointegrador-4.onrender.com/lembrete'*/}
+      const response = await fetch('http://localhost:3000/lembrete', { method: 'GET' });
       const data: Lembrete[] = await response.json();
 
       const encontrados = data.filter(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));

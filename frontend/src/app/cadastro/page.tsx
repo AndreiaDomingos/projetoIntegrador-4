@@ -39,8 +39,8 @@ export default function CadastroPage() {
     if (form.telefone) {
       const numeros = form.telefone.replace(/\D/g, '');
       telefoneFormatado = `+${numeros}`;
-    }
-    await fetch('https://projetointegrador-4.onrender.com/lembrete', {
+    }{/*'https://projetointegrador-4.onrender.com/lembrete'*/}
+    await fetch('http://localhost:3000/lembrete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
