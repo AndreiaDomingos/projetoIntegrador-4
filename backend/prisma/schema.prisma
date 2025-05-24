@@ -15,9 +15,17 @@ model Lembrete {
   telefone     String?
   email        String?
   medicamento  String
-  dose         String
-  dias         Int
+
+
+  doseUnidade  String
+  doseValor    Float
+
+  usoContinuo Boolean
+  dias        Int
+  usoInicio   DateTime?
+  intervalo   Float
   horario      String  
+  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
