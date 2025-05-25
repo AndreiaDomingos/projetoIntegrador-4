@@ -2,21 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLembreteDto } from './dto/create-lembrete.dto';
 import { UpdateLembreteDto } from './dto/update-lembrete.dto';
-import { MailService } from '../mail/mail.service'; // <- importamos o MailService
-import { SmsService } from '../sms/sms.service'; // <- importamos o SmsService
+import { MailService } from '../mail/mail.service';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class LembreteService {
   constructor(
     private prisma: PrismaService,
-    private mailService: MailService, // <- injetamos o MailService aqui
-    private smsService: SmsService, // <- injetamos o SmsService aqui
+    private mailService: MailService,
+    private smsService: SmsService,
   ) {}
 
   async create(data: CreateLembreteDto) {
-    const lembrete = await this.prisma.lembrete.create({ data });
 
-    // Envia e-mail se a notificação estiver marcada e houver e-mail preenchido
+    console.log('Dados para criar lembrete:', data);
+
+    const lembreteData = {
+      nome: data.nome,
+      idade: data.idade,
+      notificacao: data.notificacao,
+      telefone: data.telefone ?? null,
+      email: data.email ?? null,
+      medicamento: data.medicamento,
+      doseValor: data.doseValor,
+      doseUnidade: data.doseUnidade,
+      usoContinuo: data.usoContinuo,
+      dias: data.dias ?? 0,
+      usoInicio: data.usoInicio ?? null,  // <-- aqui está o nome correto
+      intervalo: data.intervalo ?? 0,
+      horario: data.horario,
+    };
+
+    const lembrete = await this.prisma.lembrete.create({ data: lembreteData });
+
+    console.log('Lembrete criado:', lembrete);  // Depois da criação
+
     if (data.notificacao && data.email) {
       await this.mailService.enviarEmailLembrete(
         data.email,
@@ -24,8 +44,8 @@ export class LembreteService {
         data.horario,
       );
     }
-  // Envia SMS se a notificação estiver marcada e houver telefone preenchido
-    if (data.telefone) {
+
+    if (data.notificacao && data.telefone) {
       await this.smsService.enviarSms(
         data.telefone,
         data.medicamento,

@@ -11,9 +11,16 @@ interface Lembrete {
   nome: string;
   idade: number;
   medicamento: string;
-  dose: string;
-  dias: number;
-  horario: string;
+  doseValor: number;
+  doseUnidade: string;
+  usoContinuo: boolean;
+  dias: number | null;
+  horario: string | null;
+  intervalo: number;
+  usoInicio: string | null;
+  notificacao: boolean;
+  telefone: string | null;
+  email: string | null;
 }
 
 export default function ConsultaPage() {
@@ -26,7 +33,7 @@ export default function ConsultaPage() {
   async function buscarLembretes() {
     if (!nomeBusca) return;
 
-    try {{/*'https://projetointegrador-4.onrender.com/lembrete'*/}
+    try {
       const response = await fetch('http://localhost:3000/lembrete', { method: 'GET' });
       const data: Lembrete[] = await response.json();
 
@@ -46,8 +53,8 @@ export default function ConsultaPage() {
   async function deletarConfirmado() {
     if (!idParaDeletar) return;
 
-    try {
-      await fetch(`https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}`, {
+    try {{/*https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}*/}
+      await fetch(`http://localhost:3000/lembrete/${idParaDeletar}`, {
         method: 'DELETE',
       });
 
@@ -90,14 +97,35 @@ export default function ConsultaPage() {
                 >
                   <Trash2 size={20} color="white" />
                 </button>
-              </div>
-
-              <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
-              <p><strong>Idade:</strong> {lembrete.idade}</p>
+              </div>              <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
+              <p><strong>Idade:</strong> {lembrete.idade} anos</p>
               <p><strong>Medicamento:</strong> {lembrete.medicamento}</p>
-              <p><strong>Dose:</strong> {lembrete.dose}</p>
-              <p><strong>Dias:</strong> {lembrete.dias}</p>
-              <p><strong>Horário:</strong> {lembrete.horario}</p>
+              <p><strong>Dose:</strong> {lembrete.doseValor} {lembrete.doseUnidade}</p>
+                {lembrete.usoContinuo ? (
+                <p><strong>Uso:</strong> Contínuo</p>
+              ) : (
+                <p><strong>Duração:</strong> {lembrete.dias} dias</p>
+              )}
+              
+              {lembrete.intervalo > 0 && (
+                <p><strong>Intervalo:</strong> A cada {lembrete.intervalo} horas</p>
+              )}
+              
+              {lembrete.horario && (
+                <p><strong>Horário:</strong> {lembrete.horario}</p>
+              )}
+              
+              {lembrete.usoInicio && (
+                <p><strong>Início:</strong> {new Date(lembrete.usoInicio).toLocaleDateString('pt-BR')}</p>
+              )}
+              
+              {lembrete.notificacao && (
+                <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+                  <p className="text-sm"><strong>Notificações:</strong> Ativadas</p>
+                  {lembrete.telefone && <p className="text-sm">📱 {lembrete.telefone}</p>}
+                  {lembrete.email && <p className="text-sm">📧 {lembrete.email}</p>}
+                </div>
+              )}
             </div>
           ))}
         </div>

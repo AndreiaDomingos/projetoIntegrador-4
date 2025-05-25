@@ -14,46 +14,98 @@ export default function CadastroPage() {
     telefone: '',
     email: '',
     medicamento: '',
-    dose: '',
+    doseValor: '',
+    doseUnidade: 'ml',
+    usoContinuo: false,
     dias: '',
     horario: '',
+    posologiaPorIntervalo: false, // para escolher entre horário fixo ou intervalo
+    usoInicio: '',
+    intervalo: '',
+    quantidade: '',
   });
+
   const [descricao, setDescricao] = useState('');
   const [carregandoDescricao, setCarregandoDescricao] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarErro, setMostrarErro] = useState(false);
   const [sucesso, setSucesso] = useState(false);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const target = e.target;
+  
+    // Verifica se target é input do tipo checkbox
+    if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+      setForm(prev => ({
+        ...prev,
+        [target.name]: target.checked,
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [target.name]: target.value,
+      }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Validações básicas:
+    if (!form.nome.trim() || !form.medicamento.trim()) {
+      alert('Por favor, preencha os campos Nome e Medicamento.');
+      return;
+    }
+
+    if (!form.doseValor || Number(form.doseValor) <= 0) {
+      alert('Informe uma dose válida.');
+      return;
+    }
+
+    if (!form.usoContinuo && !form.posologiaPorIntervalo && !form.horario) {
+      alert('Informe um horário fixo ou escolha posologia por intervalo.');
+      return;
+    }
+
+    if (form.usoContinuo === false && !form.dias) {
+      alert('Informe por quantos dias.');
+      return;
+    }
+
+    if (form.posologiaPorIntervalo) {
+      if (!form.usoInicio || !form.intervalo || !form.quantidade) {
+        alert('Preencha todos os campos de posologia por intervalo.');
+        return;
+      }
+    }
+
     let telefoneFormatado = null;
     if (form.telefone) {
       const numeros = form.telefone.replace(/\D/g, '');
       telefoneFormatado = `+${numeros}`;
-    }{/*'https://projetointegrador-4.onrender.com/lembrete'*/}
+    }
+
+    const body = {
+      nome: form.nome,
+      idade: Number(form.idade),
+      notificacao: form.notificacao,
+      telefone: form.notificacao ? telefoneFormatado : null,
+      email: form.notificacao ? form.email : null,
+      medicamento: form.medicamento,
+      doseValor: Number(form.doseValor),
+      doseUnidade: form.doseUnidade,
+      usoContinuo: form.usoContinuo,
+      dias: form.usoContinuo ? null : Number(form.dias),
+      horario: form.posologiaPorIntervalo ? null : form.horario,
+      usoInicio: form.posologiaPorIntervalo ? new Date(form.usoInicio).toISOString() : null,
+      intervalo: form.posologiaPorIntervalo ? Number(form.intervalo) : null,
+      quantidade: form.posologiaPorIntervalo ? Number(form.quantidade) : null,
+    };
+
     await fetch('http://localhost:3000/lembrete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nome: form.nome,
-        idade: parseInt(form.idade),
-        notificacao: form.notificacao,
-        telefone: form.notificacao ? telefoneFormatado : null,
-        email: form.notificacao ? form.email : null,
-        medicamento: form.medicamento,
-        dose: form.dose,
-        dias: parseInt(form.dias),
-        horario: form.horario,
-      }),
+      body: JSON.stringify(body),
     });
 
     setSucesso(true);
@@ -129,18 +181,134 @@ export default function CadastroPage() {
               required
             />
 
-            <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange}
-              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
           </>
         )}
-        
+
         <CustomTextBox name='medicamento' placeholder='Medicamento' value={form.medicamento} onChange={handleChange} required />
 
         <CustomButton type="button" onClick={buscarDescricaoMedicamento} variant="primary">Procurar informações sobre este medicamento</CustomButton>
-        
-        <CustomTextBox name='dose' placeholder='Dose' value={form.dose} onChange={handleChange} required />
-        <CustomTextBox name='dias' placeholder='Por quantos dias' type="number" value={form.dias} onChange={handleChange} required />
-        <CustomTextBox name='horario' placeholder='Horário' value={form.horario} onChange={handleChange} required />
+
+        {/* Dose - valor e unidade */}
+        <div className="flex space-x-2">
+          <input
+            type="number"
+            name="doseValor"
+            placeholder="Dose (valor)"
+            value={form.doseValor}
+            onChange={handleChange}
+            step="0.01"
+            min="0"
+            required
+            className="flex-1 border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+          <select
+            name="doseUnidade"
+            value={form.doseUnidade}
+            onChange={handleChange}
+            className="border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            <option value="ml">ml</option>
+            <option value="g">g</option>
+            <option value="cápsula">cápsula</option>
+            <option value="comprimido">comprimido</option>
+            <option value="gota">gota</option>
+            {/* Adicione mais unidades se quiser */}
+          </select>
+        </div>
+
+        {/* Uso contínuo */}
+        <div className="flex items-center space-x-2">
+          <input type="checkbox" name="usoContinuo" checked={form.usoContinuo} onChange={handleChange} />
+          <label className="text-gray-600">Uso contínuo</label>
+        </div>
+
+        {/* Dias (aparece só se não for uso contínuo) */}
+        {!form.usoContinuo && (
+          <CustomTextBox
+            name="dias"
+            placeholder="Por quantos dias"
+            type="number"
+            value={form.dias}
+            onChange={handleChange}
+            required
+          />
+        )}
+
+        {/* Escolha entre horário fixo e posologia por intervalo */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="radio"
+            id="horarioFixo"
+            name="posologiaPorIntervalo"
+            value="false"
+            checked={!form.posologiaPorIntervalo}
+            onChange={() => setForm(prev => ({ ...prev, posologiaPorIntervalo: false }))}
+          />
+          <label htmlFor="horarioFixo" className="text-gray-600">Horário fixo</label>
+
+          <input
+            type="radio"
+            id="posologiaIntervalo"
+            name="posologiaPorIntervalo"
+            value="true"
+            checked={form.posologiaPorIntervalo}
+            onChange={() => setForm(prev => ({ ...prev, posologiaPorIntervalo: true }))}
+          />
+          <label htmlFor="posologiaIntervalo" className="text-gray-600">Posologia por intervalo</label>
+        </div>
+
+        {/* Horário fixo */}
+        {!form.posologiaPorIntervalo && (
+          <CustomTextBox
+            name="horario"
+            placeholder="Horário (ex: 08:00)"
+            value={form.horario}
+            onChange={handleChange}
+            required
+          />
+        )}
+
+        {/* Posologia por intervalo */}
+        {form.posologiaPorIntervalo && (
+          <>
+            <label className="text-gray-700 font-semibold">Início do tratamento</label>
+            <input
+              type="datetime-local"
+              name="usoInicio"
+              value={form.usoInicio}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-2xl p-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+
+            <CustomTextBox
+              name="intervalo"
+              placeholder="Intervalo (em horas)"
+              type="number"
+              value={form.intervalo}
+              onChange={handleChange}
+              required
+            />
+
+            <CustomTextBox
+              name="quantidade"
+              placeholder="Quantidade de doses"
+              type="number"
+              value={form.quantidade}
+              onChange={handleChange}
+              required
+            />
+          </>
+        )}
+
         <CustomButton type="submit" variant="primary">Salvar Lembrete</CustomButton>
         <CustomButton onClick={() => router.push('/')} variant="secondary">Voltar ao Menu</CustomButton>
       </form>
