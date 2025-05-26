@@ -166,54 +166,46 @@ export default function CadastroPage() {
         <div className="flex items-center space-x-2">
           <input type="checkbox" name="notificacao" checked={form.notificacao} onChange={handleChange} />
           <label className="text-gray-600">Receber Notificação</label>
-        </div>
-
-        {form.notificacao && (
-          <>
-            <input
-              type="tel"
+        </div>        {form.notificacao && (
+          <>            <CustomTextBox
               name="telefone"
               placeholder="+55 (11) 91234-5678"
               value={form.telefone}
               onChange={handleChange}
+              type="tel"
               pattern="\+55\s\(\d{2}\)\s\d{5}-\d{4}"
-              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
               required
             />
 
-            <input
+            <CustomTextBox
               name="email"
-              type="email"
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 text-gray-900 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              type="email"
             />
           </>
         )}
 
         <CustomTextBox name='medicamento' placeholder='Medicamento' value={form.medicamento} onChange={handleChange} required />
 
-        <CustomButton type="button" onClick={buscarDescricaoMedicamento} variant="primary">Procurar informações sobre este medicamento</CustomButton>
-
-        {/* Dose - valor e unidade */}
+        <CustomButton type="button" onClick={buscarDescricaoMedicamento} variant="primary">Procurar informações sobre este medicamento</CustomButton>        {/* Dose - valor e unidade */}
         <div className="flex space-x-2">
-          <input
-            type="number"
+          <CustomTextBox
             name="doseValor"
             placeholder="Dose (valor)"
             value={form.doseValor}
             onChange={handleChange}
+            type="number"
             step="0.01"
             min="0"
             required
-            className="flex-1 border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
           />
           <select
             name="doseUnidade"
             value={form.doseUnidade}
             onChange={handleChange}
-            className="border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="border border-gray-300 rounded-2xl text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
           >
             <option value="ml">ml</option>
             <option value="g">g</option>
@@ -227,7 +219,7 @@ export default function CadastroPage() {
         {/* Uso contínuo */}
         <div className="flex items-center space-x-2">
           <input type="checkbox" name="usoContinuo" checked={form.usoContinuo} onChange={handleChange} />
-          <label className="text-gray-600">Uso contínuo</label>
+          <label className="text-gray-900">Uso contínuo</label>
         </div>
 
         {/* Dias (aparece só se não for uso contínuo) */}
@@ -274,18 +266,15 @@ export default function CadastroPage() {
             onChange={handleChange}
             required
           />
-        )}
-
-        {/* Posologia por intervalo */}
+        )}        {/* Posologia por intervalo */}
         {form.posologiaPorIntervalo && (
           <>
-            <label className="text-gray-700 font-semibold">Início do tratamento</label>
-            <input
-              type="datetime-local"
+            <CustomTextBox
               name="usoInicio"
+              placeholder="Início do tratamento"
               value={form.usoInicio}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-2xl p-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              type="datetime-local"
               required
             />
 
