@@ -23,13 +23,12 @@ export default function CadastroPage() {
     usoInicio: '',
     intervalo: '',
     quantidade: '',
-  });
-
-  const [descricao, setDescricao] = useState('');
+  });  const [descricao, setDescricao] = useState('');
   const [carregandoDescricao, setCarregandoDescricao] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarErro, setMostrarErro] = useState(false);
-  const [sucesso, setSucesso] = useState(false);
+  const [mostrarSucesso, setMostrarSucesso] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState('');
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const target = e.target;
@@ -49,32 +48,35 @@ export default function CadastroPage() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    // Validações básicas:
+    e.preventDefault();    // Validações básicas:
     if (!form.nome.trim() || !form.medicamento.trim()) {
-      alert('Por favor, preencha os campos Nome e Medicamento.');
+      setMensagemErro('Por favor, preencha os campos Nome e Medicamento.');
+      setMostrarErro(true);
       return;
     }
 
     if (!form.doseValor || Number(form.doseValor) <= 0) {
-      alert('Informe uma dose válida.');
+      setMensagemErro('Informe uma dose válida.');
+      setMostrarErro(true);
       return;
     }
 
     if (!form.usoContinuo && !form.posologiaPorIntervalo && !form.horario) {
-      alert('Informe um horário fixo ou escolha posologia por intervalo.');
+      setMensagemErro('Informe um horário fixo ou escolha posologia por intervalo.');
+      setMostrarErro(true);
       return;
     }
 
     if (form.usoContinuo === false && !form.dias) {
-      alert('Informe por quantos dias.');
+      setMensagemErro('Informe por quantos dias.');
+      setMostrarErro(true);
       return;
     }
 
     if (form.posologiaPorIntervalo) {
       if (!form.usoInicio || !form.intervalo || !form.quantidade) {
-        alert('Preencha todos os campos de posologia por intervalo.');
+        setMensagemErro('Preencha todos os campos de posologia por intervalo.');
+        setMostrarErro(true);
         return;
       }
     }
@@ -83,9 +85,7 @@ export default function CadastroPage() {
     if (form.telefone) {
       const numeros = form.telefone.replace(/\D/g, '');
       telefoneFormatado = `+${numeros}`;
-    }
-
-    const body = {
+    }    const body = {
       nome: form.nome,
       idade: Number(form.idade),
       notificacao: form.notificacao,
@@ -102,20 +102,30 @@ export default function CadastroPage() {
       quantidade: form.posologiaPorIntervalo ? Number(form.quantidade) : null,
     };
 
-    await fetch('http://localhost:3000/lembrete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    setSucesso(true);
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
+    try {
+      const response = await fetch('http://localhost:3000/lembrete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });      if (response.ok) {
+        setMostrarSucesso(true);
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);} else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || 'Erro ao cadastrar lembrete. Tente novamente.';
+        setMensagemErro(errorMessage);
+        setMostrarErro(true);
+      }
+    } catch (error) {
+      setMensagemErro('Erro de conexão. Verifique se o servidor está funcionando.');
+      setMostrarErro(true);
+      console.error('Erro ao cadastrar:', error);
+    }
   }
-
   async function buscarDescricaoMedicamento() {
     if (!form.medicamento) {
+      setMensagemErro('Por favor, preencha o nome do medicamento para pesquisar.');
       setMostrarErro(true);
       return;
     }
@@ -148,16 +158,8 @@ export default function CadastroPage() {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4"
       >
-        <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Cadastrar Lembrete</h1>
-
-        {carregandoDescricao && (
+        <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Cadastrar Lembrete</h1>        {carregandoDescricao && (
           <p className="text-blue-500 text-center font-semibold mb-4">Buscando informações do medicamento...</p>
-        )}
-
-        {sucesso && (
-          <div className="bg-green-100 text-green-700 p-3 rounded-2xl text-center font-semibold">
-            Lembrete cadastrado com sucesso!
-          </div>
         )}
 
         <CustomTextBox name='nome' placeholder='Nome' value={form.nome} onChange={handleChange} required />
@@ -211,7 +213,7 @@ export default function CadastroPage() {
             <option value="g">g</option>
             <option value="cápsula">cápsula</option>
             <option value="comprimido">comprimido</option>
-            <option value="gota">gota</option>
+            <option value="gotas">gotas</option>
             {/* Adicione mais unidades se quiser */}
           </select>
         </div>
@@ -315,16 +317,28 @@ export default function CadastroPage() {
             </CustomButton>
           </div>
         </div>
-      )}
-
-      {/* Modal ERRO (campo medicamento vazio) */}
+      )}      {/* Modal ERRO (validações e erros) */}
       {mostrarErro && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl w-full max-w-sm text-center">
-            <h2 className="text-xl font-bold text-blue-500 mb-4">Atenção!</h2>
-            <p className="text-gray-900 mb-6">Por favor, preencha o nome do medicamento para pesquisar.</p>
-            <CustomButton onClick={() => setMostrarErro(false)} variant="third" >
+            <h2 className="text-xl font-bold text-red-500 mb-4">Erro!</h2>
+            <p className="text-gray-900 mb-6">{mensagemErro}</p>
+            <CustomButton onClick={() => setMostrarErro(false)} variant="third">
               Ok
+            </CustomButton>
+          </div>
+        </div>
+      )}
+
+      {/* Modal SUCESSO */}
+      {mostrarSucesso && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-sm text-center">
+            <h2 className="text-xl font-bold text-green-500 mb-4">Sucesso!</h2>
+            <p className="text-gray-900 mb-6">Lembrete cadastrado com sucesso!</p>
+            <p className="text-gray-600 text-sm mb-6">Redirecionando para o menu principal...</p>
+            <CustomButton onClick={() => router.push('/')} variant="third">
+              Ir para Menu
             </CustomButton>
           </div>
         </div>

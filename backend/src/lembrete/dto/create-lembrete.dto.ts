@@ -53,20 +53,22 @@ export class CreateLembreteDto {
   @IsInt()
   @Min(0, { message: 'Os dias devem ser um número inteiro maior ou igual a zero' })
   dias?: number;
-
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'O intervalo deve ser um número maior ou igual a zero' })
-  
-  intervalo?: number;  @IsString()
-  @IsNotEmpty({ message: 'O horário não pode estar vazio' })
+  intervalo?: number;@IsOptional()
+  @IsString()
   @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, { 
     message: 'O horário deve estar no formato HH:mm (ex: 08:30, 14:45)' 
   })
-  horario: string;
-
+  horario?: string;
   @IsOptional()
   @IsDateString({}, { message: 'A data de início deve ser uma data válida' })
   usoInicio?: string;  // Data no formato ISO, pois no DTO usamos string para datas
+
+  @IsOptional()
+  @IsInt({ message: 'A quantidade deve ser um número inteiro' })
+  @Min(1, { message: 'A quantidade deve ser maior que zero' })
+  quantidade?: number;
 }
 

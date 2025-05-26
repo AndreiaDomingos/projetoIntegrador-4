@@ -15,9 +15,7 @@ export class LembreteService {
 
   async create(data: CreateLembreteDto) {
 
-    console.log('Dados para criar lembrete:', data);
-
-    const lembreteData = {
+    console.log('Dados para criar lembrete:', data);    const lembreteData = {
       nome: data.nome,
       idade: data.idade,
       notificacao: data.notificacao,
@@ -27,17 +25,16 @@ export class LembreteService {
       doseValor: data.doseValor,
       doseUnidade: data.doseUnidade,
       usoContinuo: data.usoContinuo,
-      dias: data.dias ?? 0,
-      usoInicio: data.usoInicio ?? null,  // <-- aqui está o nome correto
-      intervalo: data.intervalo ?? 0,
-      horario: data.horario,
+      dias: data.dias ?? null,
+      usoInicio: data.usoInicio ? new Date(data.usoInicio) : null,
+      intervalo: data.intervalo ?? null,
+      horario: data.horario ?? null,
+      quantidade: data.quantidade ?? null,
     };
 
-    const lembrete = await this.prisma.lembrete.create({ data: lembreteData });
+    const lembrete = await this.prisma.lembrete.create({ data: lembreteData });    console.log('Lembrete criado:', lembrete);  // Depois da criação
 
-    console.log('Lembrete criado:', lembrete);  // Depois da criação
-
-    if (data.notificacao && data.email) {
+    if (data.notificacao && data.email && data.horario) {
       await this.mailService.enviarEmailLembrete(
         data.email,
         data.medicamento,
@@ -45,7 +42,7 @@ export class LembreteService {
       );
     }
 
-    if (data.notificacao && data.telefone) {
+    if (data.notificacao && data.telefone && data.horario) {
       await this.smsService.enviarSms(
         data.telefone,
         data.medicamento,

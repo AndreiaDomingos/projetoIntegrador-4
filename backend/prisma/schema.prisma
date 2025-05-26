@@ -25,12 +25,12 @@ model Lembrete {
 
   doseUnidade  String
   doseValor    Float
-
   usoContinuo Boolean
   dias        Int?
   usoInicio   DateTime?
-  intervalo   Float
-  horario     String?  
+  intervalo   Float?
+  horario     String?
+  quantidade  Int?
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
