@@ -6,8 +6,7 @@ import CustomButton from '../components/CustomButton';
 import CustomTextBox from '../components/CustomTextBox';
 
 export default function CadastroPage() {
-  const router = useRouter();
-  const [form, setForm] = useState({
+  const router = useRouter();  const [form, setForm] = useState({
     nome: '',
     idade: '',
     notificacao: false,
@@ -20,10 +19,11 @@ export default function CadastroPage() {
     dias: '',
     horario: '',
     posologiaPorIntervalo: false, // para escolher entre horário fixo ou intervalo
-    usoInicio: '',
+    dataInicio: '',
+    horarioInicio: '',
     intervalo: '',
     quantidade: '',
-  });  const [descricao, setDescricao] = useState('');
+  });const [descricao, setDescricao] = useState('');
   const [carregandoDescricao, setCarregandoDescricao] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarErro, setMostrarErro] = useState(false);
@@ -71,10 +71,8 @@ export default function CadastroPage() {
       setMensagemErro('Informe por quantos dias.');
       setMostrarErro(true);
       return;
-    }
-
-    if (form.posologiaPorIntervalo) {
-      if (!form.usoInicio || !form.intervalo || !form.quantidade) {
+    }    if (form.posologiaPorIntervalo) {
+      if (!form.dataInicio || !form.horarioInicio || !form.intervalo || !form.quantidade) {
         setMensagemErro('Preencha todos os campos de posologia por intervalo.');
         setMostrarErro(true);
         return;
@@ -96,8 +94,8 @@ export default function CadastroPage() {
       doseUnidade: form.doseUnidade,
       usoContinuo: form.usoContinuo,
       dias: form.usoContinuo ? null : Number(form.dias),
-      horario: form.posologiaPorIntervalo ? null : form.horario,
-      usoInicio: form.posologiaPorIntervalo ? new Date(form.usoInicio).toISOString() : null,
+      horario: form.posologiaPorIntervalo ? form.horarioInicio : form.horario,
+      usoInicio: form.posologiaPorIntervalo ? new Date(`${form.dataInicio}T${form.horarioInicio}`).toISOString() : null,
       intervalo: form.posologiaPorIntervalo ? Number(form.intervalo) : null,
       quantidade: form.posologiaPorIntervalo ? Number(form.quantidade) : null,
     };
@@ -272,14 +270,23 @@ export default function CadastroPage() {
         {form.posologiaPorIntervalo && (
           <>
             <CustomTextBox
-              name="usoInicio"
-              placeholder="Início do tratamento"
-              value={form.usoInicio}
+              name="dataInicio"
+              placeholder="Data de início"
+              value={form.dataInicio}
               onChange={handleChange}
-              type="datetime-local"
+              type="date"
               required
             />
 
+            <CustomTextBox
+              name="horarioInicio"
+              placeholder="Horário de início (ex: 08:00)"
+              value={form.horarioInicio}
+              onChange={handleChange}
+              type="time"
+              required
+            />
+            
             <CustomTextBox
               name="intervalo"
               placeholder="Intervalo (em horas)"
