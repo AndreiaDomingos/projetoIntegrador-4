@@ -122,14 +122,14 @@ npm install
 #### Backend (.env)
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/lembretes"
-AWS_REGION="us-east-1"
-AWS_ACCESS_KEY_ID="sua_access_key"
-AWS_SECRET_ACCESS_KEY="sua_secret_key"
+AWS_SES_ACCESS_KEY="sua_access_key"
+AWS_SES_SECRET_KEY="sua_secret_key"
+AWS_SES_REGION=us-east-1
+AWS_SES_EMAIL_FROM=emailcadastradp@email.com
 ```
 
 #### Frontend (.env.local)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_GEMINI_API_KEY=sua_api_key_do_gemini
 ```
 

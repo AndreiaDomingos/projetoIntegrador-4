@@ -264,6 +264,7 @@ export default function CadastroPage() {
             placeholder="Horário (ex: 08:00)"
             value={form.horario}
             onChange={handleChange}
+            type="time"
             required
           />
         )}        {/* Posologia por intervalo */}

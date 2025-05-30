@@ -72,7 +72,7 @@ export default function ConsultaPage() {
     return `${usuarioMascarado}@${dominioMascarado}.${extensao}`;
   }
 
-  async function buscarLembretes() {
+  {/*async function buscarLembretes() {
     if (!nomeBusca) return;
 
     try {
@@ -85,7 +85,21 @@ export default function ConsultaPage() {
       console.error('Erro ao buscar lembretes:', error);
       setLembretes([]);
     }
+  }*/}
+
+  async function buscarLembretes() {
+  if (!nomeBusca) return;
+
+  try {
+    // Busca apenas os resultados filtrados
+    const response = await fetch(`http://localhost:3000/lembrete/buscar/${nomeBusca}`);
+    const data: Lembrete[] = await response.json();
+    setLembretes(data); // Já vem filtrado!
+  } catch (error) {
+    console.error('Erro ao buscar lembretes:', error);
+    setLembretes([]);
   }
+}
 
   function pedirConfirmacao(id: number) {
     setIdParaDeletar(id);

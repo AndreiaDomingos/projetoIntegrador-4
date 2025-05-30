@@ -68,6 +68,17 @@ export class LembreteService {
     });
   }
 
+  async buscarPorNome(nome: string) {
+  return this.prisma.lembrete.findMany({
+    where: {
+      nome: {
+        contains: nome,
+        mode: 'insensitive'
+      }
+    }
+  });
+}
+
   async remove(id: number) {
     return this.prisma.lembrete.delete({ where: { id } });
   }
