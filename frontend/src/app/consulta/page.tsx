@@ -96,7 +96,7 @@ export default function ConsultaPage() {
     if (!idParaDeletar) return;
 
     try {{/*https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}*/}
-      await fetch(`https://projetointegrador-4-6txb.onrender.com/${idParaDeletar}`, {
+      await fetch(`https://projetointegrador-4-6txb.onrender.com/lembrete/${idParaDeletar}`, {
         method: 'DELETE',
       });
 
