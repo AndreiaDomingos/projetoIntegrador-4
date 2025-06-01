@@ -101,7 +101,7 @@ export default function CadastroPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/lembrete', {
+      const response = await fetch('https://projetointegrador-4-6txb.onrender.com/lembrete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

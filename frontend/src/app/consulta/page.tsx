@@ -72,27 +72,13 @@ export default function ConsultaPage() {
     return `${usuarioMascarado}@${dominioMascarado}.${extensao}`;
   }
 
-  {/*async function buscarLembretes() {
-    if (!nomeBusca) return;
-
-    try {
-      const response = await fetch('http://localhost:3000/lembrete', { method: 'GET' });
-      const data: Lembrete[] = await response.json();
-
-      const encontrados = data.filter(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));
-      setLembretes(encontrados);
-    } catch (error) {
-      console.error('Erro ao buscar lembretes:', error);
-      setLembretes([]);
-    }
-  }*/}
-
+// Função para buscar lembretes filtrados pelo nome
   async function buscarLembretes() {
   if (!nomeBusca) return;
 
   try {
     // Busca apenas os resultados filtrados
-    const response = await fetch(`http://localhost:3000/lembrete/buscar/${nomeBusca}`);
+    const response = await fetch(`https://projetointegrador-4-6txb.onrender.com/lembrete/buscar/${nomeBusca}`);
     const data: Lembrete[] = await response.json();
     setLembretes(data); // Já vem filtrado!
   } catch (error) {
@@ -110,7 +96,7 @@ export default function ConsultaPage() {
     if (!idParaDeletar) return;
 
     try {{/*https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}*/}
-      await fetch(`http://localhost:3000/lembrete/${idParaDeletar}`, {
+      await fetch(`https://projetointegrador-4-6txb.onrender.com/${idParaDeletar}`, {
         method: 'DELETE',
       });
 
