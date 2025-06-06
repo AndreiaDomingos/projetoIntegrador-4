@@ -38,7 +38,7 @@ export default function ConsultaPage() {
       if (numeros.length >= 10) {
         const ddd = numeros.substring(0, 2);
         const inicio = numeros.substring(2, 3);
-        const meio = numeros.substring(3, 7);
+        //const meio = numeros.substring(3, 7);
         const final = numeros.substring(7);
         
         // Mascara o meio e parte do final
