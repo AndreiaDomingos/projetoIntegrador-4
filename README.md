@@ -4,7 +4,7 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" width="40" height="40"/>
   <img src="https://nestjs.com/img/logo-small.svg" alt="NestJS" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg" alt="Prisma" width="40" height="40"/>
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg" alt="Jest" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="40" height="40"/>
@@ -18,6 +18,18 @@
 # Sistema de Gerenciamento de Lembretes
 
 Este projeto é um sistema de gerenciamento de lembretes de remédios com funcionalidades de notificação via e-mail e SMS. A aplicação é composta por uma API desenvolvida em NestJS (Node.js) e um front-end construído com Next.js e React, utilizando TypeScript e Tailwind CSS para uma interface moderna e responsiva. O sistema permite cadastrar, consultar e gerenciar lembretes, enviando notificações automáticas conforme programado.
+
+## Funcionalidades
+
+- 📋 **Cadastro de Lembretes**: Registre informações completas sobre medicamentos
+- 🔍 **Consulta de Lembretes**: Busque e visualize lembretes cadastrados
+- 🗑️ **Exclusão de Lembretes**: Remova lembretes com confirmação
+- 📱 **Notificações SMS**: Envio automático via AWS SNS
+- 📧 **Notificações Email**: Envio automático via AWS SES
+- 🔒 **Privacidade**: Mascaramento de dados pessoais na consulta
+- 🏥 **Informações de Medicamentos**: Integração com IA para buscar informações
+- ⏰ **Agendamento Flexível**: Horário fixo ou intervalos personalizados
+- 📊 **Interface Responsiva**: Design moderno com Tailwind CSS
 
 **Alunos**
 
@@ -74,7 +86,7 @@ projetoIntegrador-4/
 - **Node.js**
 - **NestJS**: Framework para construção de APIs escaláveis
 - **Prisma ORM**: Mapeamento objeto-relacional para banco de dados
-- **SQLite** (ou outro banco, conforme configuração do Prisma)
+- **PostgreSQL**: Banco de dados relacional
 - **Jest**: Testes automatizados
 - **AWS**: Serviços de nuvem
 - **Render**: Hospedagem do backend
@@ -107,11 +119,19 @@ npm install
 ```
 
 ### 3. Configure as variáveis de ambiente
-- No backend, configure o acesso ao banco de dados em `backend/prisma/schema.prisma` e, se necessário, crie um arquivo `.env`.
-- No frontend, configure a URL da API no arquivo `.env.local`:
-  ```env
-  NEXT_PUBLIC_API_URL=http://localhost:3000
-  ```
+#### Backend (.env)
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/lembretes"
+AWS_SES_ACCESS_KEY="sua_access_key"
+AWS_SES_SECRET_KEY="sua_secret_key"
+AWS_SES_REGION=us-east-1
+AWS_SES_EMAIL_FROM=emailcadastradp@email.com
+```
+
+#### Frontend (.env.local)
+```env
+NEXT_PUBLIC_GEMINI_API_KEY=sua_api_key_do_gemini
+```
 
 ### 4. Execute as migrações do banco de dados (backend)
 ```bash
@@ -131,6 +151,21 @@ cd ../frontend
 npm run dev
 ```
 O frontend estará disponível em `http://localhost:3001` (ou porta configurada).
+
+## Deploy (Produção)
+
+### Backend (Render)
+1. Conecte seu repositório no [Render](https://render.com)
+2. Configure o Root Directory como `backend`
+3. Use os seguintes comandos:
+   - **Build Command:** `npm install && npx prisma generate && npm run build`
+   - **Start Command:** `npm run start:prod`
+4. Configure as variáveis de ambiente (DATABASE_URL, etc.)
+
+### Frontend (Vercel)
+1. Conecte seu repositório na [Vercel](https://vercel.com)
+2. Configure o Root Directory como `frontend`
+3. O deploy será automático com os comandos padrão do Next.js
 
 ---
 

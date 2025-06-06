@@ -27,6 +27,11 @@ export class LembreteController {
     return this.lembreteService.update(+id, updateLembreteDto);
   }
 
+  @Get('buscar/:nome')
+  async buscarPorNome(@Param('nome') nome: string) {
+  return this.lembreteService.buscarPorNome(nome);
+}
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.lembreteService.remove(+id);

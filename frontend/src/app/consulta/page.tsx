@@ -11,9 +11,16 @@ interface Lembrete {
   nome: string;
   idade: number;
   medicamento: string;
-  dose: string;
-  dias: number;
-  horario: string;
+  doseValor: number;
+  doseUnidade: string;
+  usoContinuo: boolean;
+  dias: number | null;
+  horario: string | null;
+  intervalo: number;
+  usoInicio: string | null;
+  notificacao: boolean;
+  telefone: string | null;
+  email: string | null;
 }
 
 export default function ConsultaPage() {
@@ -22,21 +29,63 @@ export default function ConsultaPage() {
   const [lembretes, setLembretes] = useState<Lembrete[]>([]);
   const [idParaDeletar, setIdParaDeletar] = useState<number | null>(null); // <- ID para deletar
   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);     // <- Mostrar modal
-
-  async function buscarLembretes() {
-    if (!nomeBusca) return;
-
-    try {
-      const response = await fetch('https://projetointegrador-4.onrender.com/lembrete', { method: 'GET' });
-      const data: Lembrete[] = await response.json();
-
-      const encontrados = data.filter(l => l.nome.toLowerCase().includes(nomeBusca.toLowerCase()));
-      setLembretes(encontrados);
-    } catch (error) {
-      console.error('Erro ao buscar lembretes:', error);
-      setLembretes([]);
+  // Função para mascarar telefone
+  function mascararTelefone(telefone: string): string {
+    if (!telefone) return '';
+    // +5519999999999 → +55 (19) 9****-**99
+    if (telefone.startsWith('+55')) {
+      const numeros = telefone.substring(3); // Remove +55
+      if (numeros.length >= 10) {
+        const ddd = numeros.substring(0, 2);
+        const inicio = numeros.substring(2, 3);
+        const meio = numeros.substring(3, 7);
+        const final = numeros.substring(7);
+        
+        // Mascara o meio e parte do final
+        const meioMascarado = '****';
+        const finalMascarado = final.length >= 4 
+          ? '**' + final.substring(final.length - 2)
+          : final;
+          
+        return `+55 (${ddd}) ${inicio}${meioMascarado}-${finalMascarado}`;
+      }
     }
+    return telefone; // Retorna original se não conseguir formatar
   }
+
+  // Função para mascarar email
+  function mascararEmail(email: string): string {
+    if (!email) return '';
+    const [usuario, dominio] = email.split('@');
+    if (!usuario || !dominio) return email;
+    
+    // usuario@exemplo.com → u****o@e****o.com
+    const usuarioMascarado = usuario.length > 2 
+      ? usuario.charAt(0) + '****' + usuario.charAt(usuario.length - 1)
+      : usuario;
+      
+    const [nomeDominio, extensao] = dominio.split('.');
+    const dominioMascarado = nomeDominio.length > 2
+      ? nomeDominio.charAt(0) + '****' + nomeDominio.charAt(nomeDominio.length - 1)
+      : nomeDominio;
+    
+    return `${usuarioMascarado}@${dominioMascarado}.${extensao}`;
+  }
+
+// Função para buscar lembretes filtrados pelo nome
+  async function buscarLembretes() {
+  if (!nomeBusca) return;
+
+  try {
+    // Busca apenas os resultados filtrados
+    const response = await fetch(`https://projetointegrador-4-6txb.onrender.com/lembrete/buscar/${nomeBusca}`);
+    const data: Lembrete[] = await response.json();
+    setLembretes(data); // Já vem filtrado!
+  } catch (error) {
+    console.error('Erro ao buscar lembretes:', error);
+    setLembretes([]);
+  }
+}
 
   function pedirConfirmacao(id: number) {
     setIdParaDeletar(id);
@@ -46,8 +95,8 @@ export default function ConsultaPage() {
   async function deletarConfirmado() {
     if (!idParaDeletar) return;
 
-    try {
-      await fetch(`https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}`, {
+    try {{/*https://projetointegrador-4.onrender.com/lembrete/${idParaDeletar}*/}
+      await fetch(`https://projetointegrador-4-6txb.onrender.com/lembrete/${idParaDeletar}`, {
         method: 'DELETE',
       });
 
@@ -90,14 +139,34 @@ export default function ConsultaPage() {
                 >
                   <Trash2 size={20} color="white" />
                 </button>
-              </div>
-
-              <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
-              <p><strong>Idade:</strong> {lembrete.idade}</p>
+              </div>              <h2 className="text-xl font-bold text-blue-500">{lembrete.nome}</h2>
+              <p><strong>Idade:</strong> {lembrete.idade} anos</p>
               <p><strong>Medicamento:</strong> {lembrete.medicamento}</p>
-              <p><strong>Dose:</strong> {lembrete.dose}</p>
-              <p><strong>Dias:</strong> {lembrete.dias}</p>
-              <p><strong>Horário:</strong> {lembrete.horario}</p>
+              <p><strong>Dose:</strong> {lembrete.doseValor} {lembrete.doseUnidade}</p>
+                {lembrete.usoContinuo ? (
+                <p><strong>Uso:</strong> Contínuo</p>
+              ) : (
+                <p><strong>Duração:</strong> {lembrete.dias} dias</p>
+              )}
+              
+              {lembrete.intervalo > 0 && (
+                <p><strong>Intervalo:</strong> A cada {lembrete.intervalo} horas</p>
+              )}
+              
+              {lembrete.horario && (
+                <p><strong>Horário:</strong> {lembrete.horario}</p>
+              )}
+              
+              {lembrete.usoInicio && (
+                <p><strong>Início:</strong> {new Date(lembrete.usoInicio).toLocaleDateString('pt-BR')}</p>
+              )}
+                {lembrete.notificacao && (
+                <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+                  <p className="text-sm"><strong>Notificações:</strong> Ativadas</p>
+                  {lembrete.telefone && <p className="text-sm">📱 {mascararTelefone(lembrete.telefone)}</p>}
+                  {lembrete.email && <p className="text-sm">📧 {mascararEmail(lembrete.email)}</p>}
+                </div>
+              )}
             </div>
           ))}
         </div>

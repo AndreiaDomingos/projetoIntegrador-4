@@ -2,30 +2,47 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLembreteDto } from './dto/create-lembrete.dto';
 import { UpdateLembreteDto } from './dto/update-lembrete.dto';
-import { MailService } from '../mail/mail.service'; // <- importamos o MailService
-import { SmsService } from '../sms/sms.service'; // <- importamos o SmsService
+import { MailService } from '../mail/mail.service';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class LembreteService {
   constructor(
     private prisma: PrismaService,
-    private mailService: MailService, // <- injetamos o MailService aqui
-    private smsService: SmsService, // <- injetamos o SmsService aqui
+    private mailService: MailService,
+    private smsService: SmsService,
   ) {}
 
   async create(data: CreateLembreteDto) {
-    const lembrete = await this.prisma.lembrete.create({ data });
 
-    // Envia e-mail se a notificação estiver marcada e houver e-mail preenchido
-    if (data.notificacao && data.email) {
+    console.log('Dados para criar lembrete:', data);    const lembreteData = {
+      nome: data.nome,
+      idade: data.idade,
+      notificacao: data.notificacao,
+      telefone: data.telefone ?? null,
+      email: data.email ?? null,
+      medicamento: data.medicamento,
+      doseValor: data.doseValor,
+      doseUnidade: data.doseUnidade,
+      usoContinuo: data.usoContinuo,
+      dias: data.dias ?? null,
+      usoInicio: data.usoInicio ? new Date(data.usoInicio) : null,
+      intervalo: data.intervalo ?? null,
+      horario: data.horario ?? null,
+      quantidade: data.quantidade ?? null,
+    };
+
+    const lembrete = await this.prisma.lembrete.create({ data: lembreteData });    console.log('Lembrete criado:', lembrete);  // Depois da criação
+
+    if (data.notificacao && data.email && data.horario) {
       await this.mailService.enviarEmailLembrete(
         data.email,
         data.medicamento,
         data.horario,
       );
     }
-  // Envia SMS se a notificação estiver marcada e houver telefone preenchido
-    if (data.telefone) {
+
+    if (data.notificacao && data.telefone && data.horario) {
       await this.smsService.enviarSms(
         data.telefone,
         data.medicamento,
@@ -50,6 +67,17 @@ export class LembreteService {
       data,
     });
   }
+
+  async buscarPorNome(nome: string) {
+  return this.prisma.lembrete.findMany({
+    where: {
+      nome: {
+        contains: nome,
+        mode: 'insensitive'
+      }
+    }
+  });
+}
 
   async remove(id: number) {
     return this.prisma.lembrete.delete({ where: { id } });

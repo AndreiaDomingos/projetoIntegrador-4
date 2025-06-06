@@ -16,7 +16,7 @@ export default function Home() {
       </div>
 
       <h1 className="text-3xl font-bold text-gray-700 text-center mb-10">
-        Gerenciador de Lembretes
+        LembreMed
       </h1>
 
       <div className="flex flex-col space-y-4 w-full max-w-xs">
