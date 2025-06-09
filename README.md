@@ -88,7 +88,6 @@ projetoIntegrador-4/
 - **NestJS**: Framework para construção de APIs escaláveis
 - **Prisma ORM**: Mapeamento objeto-relacional para banco de dados
 - **PostgreSQL**: Banco de dados relacional
-- **Jest**: Testes automatizados
 - **AWS**: Serviços de nuvem
 - **Render**: Hospedagem do backend
 
@@ -159,8 +158,8 @@ O frontend estará disponível em `http://localhost:3001` (ou porta configurada)
 1. Conecte seu repositório no [Render](https://render.com)
 2. Configure o Root Directory como `backend`
 3. Use os seguintes comandos:
-   - **Build Command:** `npm install && npx prisma generate && npm run build`
-   - **Start Command:** `npm run start:prod`
+   - **Build Command:** `npm install && npx prisma generate`
+   - **Start Command:** `npm run start`
 4. Configure as variáveis de ambiente (DATABASE_URL, etc.)
 
 ### Frontend (Vercel)

@@ -29,6 +29,7 @@ export default function CadastroPage() {
   const [mostrarErro, setMostrarErro] = useState(false);
   const [mostrarSucesso, setMostrarSucesso] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+  const [mostrarExemploTelefone, setMostrarExemploTelefone] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const target = e.target;
@@ -167,15 +168,25 @@ export default function CadastroPage() {
           <input type="checkbox" name="notificacao" checked={form.notificacao} onChange={handleChange} />
           <label className="text-gray-600">Receber Notificação</label>
         </div>        {form.notificacao && (
-          <>            <CustomTextBox
+          <>            
+          <div className="relative">
+            <input
               name="telefone"
               placeholder="+55 (11) 91234-5678"
               value={form.telefone}
               onChange={handleChange}
+              onFocus={() => setMostrarExemploTelefone(true)}
+              onBlur={() => setMostrarExemploTelefone(false)}
               type="tel"
-              pattern="\+55\s\(\d{2}\)\s\d{5}-\d{4}"
               required
+              className="w-full border border-gray-300 rounded-2xl text-gray-900 p-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
+            {mostrarExemploTelefone && (
+              <div className="mt-1 text-sm text-gray-500">
+                <span className="font-medium">Exemplo:</span> +55 (11) 91234-5678
+              </div>
+            )}
+          </div>
 
             <CustomTextBox
               name="email"
