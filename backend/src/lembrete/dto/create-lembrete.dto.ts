@@ -38,7 +38,7 @@ export class CreateLembreteDto {
   medicamento: string;
 
   @IsNumber()
-  @Min(0.1, { message: 'A dose deve ser maior que zero' })
+  @Min(0.01, { message: 'A dose deve ser maior ou igual a 0.01' })
   doseValor: number;
 
   @IsString()
