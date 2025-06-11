@@ -25,7 +25,7 @@ export class CreateLembreteDto {
   @IsOptional()
   @IsString({ message: 'O telefone deve ser uma string' })
   @Matches(/^\+55\d{2}9\d{8}$/, { 
-    message: 'O telefone deve seguir o padrão brasileiro: +55DDNNNNNNNNN (ex: +5519988887777)' 
+    message: 'O telefone deve seguir o padrão brasileiro: +55 (DD) NNNNNNNNN (ex: +55 (19) 98888-7777)' 
   })
   telefone?: string;
 
