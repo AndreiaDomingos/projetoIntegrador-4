@@ -8,8 +8,8 @@ export class SmsService {
 
   constructor(private configService: ConfigService) {
     const region = this.configService.get<string>('AWS_SES_REGION') ?? '';
-    const accessKeyId = this.configService.get<string>('AWS_SES_ACCESS_KEY') ?? '';
-    const secretAccessKey = this.configService.get<string>('AWS_SES_SECRET_KEY') ?? '';
+    const accessKeyId = this.configService.get<string>('AWS_SES_ACCESS_KEY_GABRIEL') ?? '';
+    const secretAccessKey = this.configService.get<string>('AWS_SES_SECRET_KEY_GABRIEL') ?? '';
 
     if (!region || !accessKeyId || !secretAccessKey) {
       throw new Error('Faltando configurações do AWS SNS no .env!');
